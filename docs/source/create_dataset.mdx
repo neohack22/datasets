@@ -1,35 +1,36 @@
-# Create a dataset
+# Créer un ensemble de données
 
-Sometimes, you may need to create a dataset if you're working with your own data. Creating a dataset with 🤗 Datasets confers all the advantages of the library to your dataset: fast loading and processing, [stream enormous datasets](stream), [memory-mapping](https://huggingface.co/course/chapter5/4?fw=pt#the-magic-of-memory-mapping), and more. You can easily and rapidly create a dataset with 🤗 Datasets low-code approaches, reducing the time it takes to start training a model. In many cases, it is as easy as [dragging and dropping](upload_dataset#upload-with-the-hub-ui) your data files into a dataset repository on the Hub.
+Parfois, vous devrez peut-être créer un ensemble de données si vous travaillez avec vos propres données. Créer un ensemble de données avec 🤗 Datasets confère tous les avantages de la bibliothèque à votre ensemble de données : chargement et traitement rapides, interopérabilité avec l'ensemble de l'écosystème 🤗 et partage facile sur le Hub.
 
+Dans ce didacticiel, vous apprendrez comment utiliser les méthodes low-code de 🤗 Datasets pour créer tous types d'ensembles de données :
 In this tutorial, you'll learn how to use 🤗 Datasets low-code methods for creating all types of datasets:
 
-* Folder-based builders for quickly creating an image or audio dataset
-* `from_` methods for creating datasets from local files
+* Constructeurs basés sur des dossiers pour créer rapidement un ensemble de données d'images ou d'audio
+* Méthodes `from_` pour créer des ensembles de données à partir de fichiers locaux
 
-## File-based builders
+## Constructeurs basés sur des fichiers
 
-🤗 Datasets supports many common formats such as `csv`, `json/jsonl`, `parquet`, `txt`.
+🤗 Datasets prend en charge de nombreux formats courants tels que `csv`, `json/jsonl`, `parquet`, `txt`.
 
-For example it can read a dataset made up of one or several CSV files (in this case, pass your CSV files as a list):
+Par exemple, il peut lire un ensemble de données composé d'un ou plusieurs fichiers CSV (dans ce cas, passez vos fichiers CSV sous forme de liste) :
 
 ```py
 >>> from datasets import load_dataset
 >>> dataset = load_dataset("csv", data_files="my_file.csv")
 ```
 
-To get the list of supported formats and code examples, follow this guide [here](https://huggingface.co/docs/datasets/loading#local-and-remote-files).
+Pour obtenir la liste des formats pris en charge et des exemples de code, suivez ce guide [here](https://huggingface.co/docs/datasets/loading#local-and-remote-files).
 
-## Folder-based builders
+## Constructeurs basés sur des dossiers
 
-There are two folder-based builders, [`ImageFolder`] and [`AudioFolder`]. These are low-code methods for quickly creating an image or speech and audio dataset with several thousand examples. They are great for rapidly prototyping computer vision and speech models before scaling to a larger dataset. Folder-based builders takes your data and automatically generates the dataset's features, splits, and labels. Under the hood:
+Il existe deux constructeurs basés sur des dossiers, [`ImageFolder`] and [`AudioFolder`]. Ce sont des méthodes low-code pour créer rapidement un ensemble de données d'images ou de discours et d'audio avec plusieurs milliers d'exemples. Ils déduisent les divisions des ensembles de données de la structure du dépôt et les noms des étiquettes des noms des répertoires.
 
-* [`ImageFolder`] uses the [`~datasets.Image`] feature to decode an image file. Many image extension formats are supported, such as jpg and png, but other formats are also supported. You can check the complete [list](https://github.com/huggingface/datasets/blob/b5672a956d5de864e6f5550e493527d962d6ae55/src/datasets/packaged_modules/imagefolder/imagefolder.py#L39) of supported image extensions.
-* [`AudioFolder`] uses the [`~datasets.Audio`] feature to decode an audio file. Audio extensions such as wav and mp3 are supported, and you can check the complete [list](https://github.com/huggingface/datasets/blob/b5672a956d5de864e6f5550e493527d962d6ae55/src/datasets/packaged_modules/audiofolder/audiofolder.py#L39) of supported audio extensions.
+* [`ImageFolder`] utilise la fonctionnalité [`~datasets.Image`] pour décoder un fichier image. De nombreux formats d'extension d'image sont pris en charge, tels que jpg et png, mais d'autres formats sont également pris en charge. Vous pouvez consulter la liste complète [list](https://github.com/huggingface/datasets/blob/b5672a956d5de864e6f5550e493527d962d6ae55/src/datasets/packaged_modules/imagefolder/imagefolder.py#L39) of supported image extensions.
+* [`AudioFolder`] utilise la fonctionnalité [`~datasets.Audio`] pour décoder un fichier audio. Les extensions audio telles que wav et mp3 sont prises en charge, et vous pouvez consulter la liste complète [list](https://github.com/huggingface/datasets/blob/b5672a956d5de864e6f5550e493527d962d6ae55/src/datasets/packaged_modules/audiofolder/audiofolder.py#L39) of supported audio extensions.
 
-The dataset splits are generated from the repository structure, and the label names are automatically inferred from the directory name. 
+Les divisions des ensembles de données sont générées à partir de la structure du dépôt et les noms des étiquettes sont automatiquement déduits du nom du répertoire.
 
-For example, if your image dataset (it is the same for an audio dataset) is stored like this:
+Par exemple, si votre ensemble de données d'images (c'est la même chose pour un ensemble de données audio) est stocké comme ceci :
 
 ```
 pokemon/train/grass/bulbasaur.png
@@ -41,13 +42,13 @@ pokemon/test/fire/charmeleon.png
 pokemon/test/water/wartortle.png
 ```
 
-Then this is how the folder-based builder generates an example:
+Alors, voici comment le constructeur basé sur des dossiers génère un exemple :
 
 <div class="flex justify-center">
     <img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/datasets/folder-based-builder.png"/>
 </div>
 
-Create the image dataset by specifying `imagefolder` in [`load_dataset`]:
+Créez l'ensemble de données d'images en spécifiant `imagefolder` dans [`load_dataset`]:
 
 ```py
 >>> from datasets import load_dataset
@@ -55,7 +56,7 @@ Create the image dataset by specifying `imagefolder` in [`load_dataset`]:
 >>> dataset = load_dataset("imagefolder", data_dir="/path/to/pokemon")
 ```
 
-An audio dataset is created in the same way, except you specify `audiofolder` in [`load_dataset`] instead:
+Un ensemble de données audio est créé de la même manière, sauf que vous spécifiez `audiofolder` dans [`load_dataset`] à la place :
 
 ```py
 >>> from datasets import load_dataset
@@ -63,7 +64,7 @@ An audio dataset is created in the same way, except you specify `audiofolder` in
 >>> dataset = load_dataset("audiofolder", data_dir="/path/to/folder")
 ```
 
-Any additional information about your dataset, such as text captions or transcriptions, can be included with a `metadata.csv` file in the folder containing your dataset. The metadata file needs to have a `file_name` column that links the image or audio file to its corresponding metadata:
+Toute information supplémentaire sur votre ensemble de données, telle que des légendes de texte ou des transcriptions, peut être incluse avec un fichier `metadata.csv` dans le dossier contenant votre ensemble de données. Le fichier de métadonnées doit comporter une ligne d'en-tête `file_name` avec les noms des colonnes que vous souhaitez utiliser et chaque ligne en dessous doit correspondre à un fichier de votre ensemble de données :
 
 ```
 file_name, text
@@ -72,13 +73,13 @@ charmander.png, It has a preference for hot things.
 squirtle.png, When it retracts its long neck into its shell, it squirts out water with vigorous force.
 ```
 
-To learn more about each of these folder-based builders, check out the and <a href="https://huggingface.co/docs/datasets/image_dataset#imagefolder"><span class="underline decoration-yellow-400 decoration-2 font-semibold">ImageFolder</span></a> or <a href="https://huggingface.co/docs/datasets/audio_dataset#audiofolder"><span class="underline decoration-pink-400 decoration-2 font-semibold">AudioFolder</span></a> guides.
+Pour en savoir plus sur chacun de ces constructeurs basés sur des dossiers, consultez la documentation <a href="https://huggingface.co/docs/datasets/image_dataset#imagefolder"><span class="underline decoration-yellow-400 decoration-2 font-semibold">ImageFolder</span></a> or <a href="https://huggingface.co/docs/datasets/audio_dataset#audiofolder"><span class="underline decoration-pink-400 decoration-2 font-semibold">AudioFolder</span></a>.
 
-## From Python dictionaries
+## À partir de dictionnaires Python
 
-You can also create a dataset from data in Python dictionaries. There are two ways you can create a dataset using the `from_` methods:
+Vous pouvez également créer un ensemble de données à partir de données dans des dictionnaires Python. Il existe deux façons de créer un ensemble de données à l'aide des méthodes `from_` :
 
-    * The [`~Dataset.from_generator`] method is the most memory-efficient way to create a dataset from a [generator](https://wiki.python.org/moin/Generators) due to a generators iterative behavior. This is especially useful when you're working with a really large dataset that may not fit in memory, since the dataset is generated on disk progressively and then memory-mapped.
+    * La méthode [`~Dataset.from_generator`] est la façon la plus efficace en termes de mémoire de créer un ensemble de données à partir d'un [generator](https://wiki.python.org/moin/Generators) en raison du comportement itératif des générateurs. Ceci est particulièrement utile lorsque vous travaillez avec un ensemble de données très volumineux qui peut ne pas tenir dans la mémoire, car l'ensemble de données est généré progressivement sur le disque, puis mappé en mémoire.
 
     ```py
     >>> from datasets import Dataset
@@ -90,7 +91,7 @@ You can also create a dataset from data in Python dictionaries. There are two wa
     {"pokemon": "bulbasaur", "type": "grass"}
     ```
 
-    A generator-based [`IterableDataset`] needs to be iterated over with a `for` loop for example:
+    Un [`IterableDataset`] basé sur un générateur doit être itéré avec une boucle `for` par exemple :
 
     ```py
     >>> from datasets import IterableDataset
@@ -101,7 +102,7 @@ You can also create a dataset from data in Python dictionaries. There are two wa
     {"pokemon": "squirtle", "type": "water"}
     ```
 
-    * The [`~Dataset.from_dict`] method is a straightforward way to create a dataset from a dictionary:
+    * La méthode [`~Dataset.from_dict`] est un moyen simple de créer un ensemble de données à partir d'un dictionnaire :
 
     ```py
     >>> from datasets import Dataset
@@ -110,10 +111,11 @@ You can also create a dataset from data in Python dictionaries. There are two wa
     {"pokemon": "bulbasaur", "type": "grass"}
     ```
 
-    To create an image or audio dataset, chain the [`~Dataset.cast_column`] method with [`~Dataset.from_dict`] and specify the column and feature type. For example, to create an audio dataset:
+    Pour créer un ensemble de données d'images ou d'audio, enchaînez la méthode [`~Dataset.cast_column`] avec [`~Dataset.from_dict`] et spécifiez la colonne et le type de fonctionnalité. Par exemple, pour créer un ensemble de données audio :
 
     ```py
     >>> audio_dataset = Dataset.from_dict({"audio": ["path/to/audio_1", ..., "path/to/audio_n"]}).cast_column("audio", Audio())
     ```
 
-Now that you know how to create a dataset, consider sharing it on the Hub so the community can also benefit from your work! Go on to the next section to learn how to share your dataset.
+
+Maintenant que vous savez comment créer un ensemble de données, envisagez de le partager sur le Hub afin que la communauté puisse également bénéficier de votre travail ! Passez à la section suivante pour apprendre comment partager votre ensemble de données.
